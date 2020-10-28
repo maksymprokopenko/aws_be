@@ -3,9 +3,6 @@ import type { Serverless } from 'serverless/aws';
 const serverlessConfiguration: Serverless = {
   service: {
     name: 'product-service',
-    // app and org for use with dashboard.serverless.com
-    // app: your-app-name,
-    // org: your-org-name,
   },
   frameworkVersion: '2',
   custom: {
@@ -19,6 +16,8 @@ const serverlessConfiguration: Serverless = {
   provider: {
     name: 'aws',
     runtime: 'nodejs12.x',
+    stage: 'dev',
+    region: 'eu-west-1',
     apiGateway: {
       minimumCompressionSize: 1024,
     },
@@ -27,13 +26,24 @@ const serverlessConfiguration: Serverless = {
     },
   },
   functions: {
-    hello: {
-      handler: 'handler.hello',
+    productInfo: {
+      handler: 'handler.productInfo',
       events: [
         {
           http: {
             method: 'get',
-            path: 'hello',
+            path: 'getProductInfo',
+          }
+        }
+      ]
+    },
+    productList: {
+      handler: 'handler.productList',
+      events: [
+        {
+          http: {
+            method: 'get',
+            path: 'getProductList',
           }
         }
       ]
