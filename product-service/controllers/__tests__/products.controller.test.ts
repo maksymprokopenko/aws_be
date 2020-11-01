@@ -18,3 +18,9 @@ test('getProductById should return product by ID', () => {
         expect(product).toBe(MOCK_DB.products[0]);
     });
 });
+
+test('should return null if no product found by ID', () => {
+    getProductById('123').then((product: ProductModel) => {
+        expect(product).toBeNull();
+    });
+});

@@ -1,0 +1,56 @@
+service: product-service
+frameworkVersion: '2'
+
+provider:
+    name: aws
+    runtime: nodejs12.x
+    stage: dev
+    region: eu-west-1
+
+plugins:
+    -   serverless-webpack
+    -   serverless-aws-documentation
+
+functions:
+    productInfo:
+        handler: handler.productInfo
+        events:
+            -   http:
+                    path: product
+                    method: get
+                    cors: true
+                    documentation:
+                        summary: Product by ID.
+                        description: Returns the product by ID.
+                        queryParams:
+                            -
+                                name: id
+                                description: Product ID.
+                                required: true
+                        methodResponses:
+                            -   statusCode: '200'
+                                description: Returned when the operation is completed successfully.
+                                responseModels:
+                                    "application/json": ProductModel
+    productList:
+        handler: handler.productList
+        events:
+            -   http:
+                    path: products
+                    method: get
+                    cors: true
+                    documentation:
+                        summary: All Products.
+                        description: Returns the list of all products.
+                        methodResponses:
+                            -   statusCode: '200'
+                                description: Returned when the operation is completed successfully.
+                                responseModels:
+                                    "application/json": ProductsModel
+
+custom:
+    documentation: ${file(./swagger/documentation.yml)}
+    webpack:
+        webpackConfig: './webpack.config.js'
+        packager: 'npm'
+        includeModules: true

@@ -14,8 +14,10 @@ export const getAllProducts = async (): Promise<ProductModel[]> => {
 
 export const getProductById = async (searchId: string): Promise<ProductModel> => {
     return new Promise((resolve) => {
+        const product = MOCK_DB.products.find(({ id }) => id === searchId);
+
         setTimeout(() => {
-            resolve(MOCK_DB.products.find(({ id }) => id === searchId));
+            resolve(product);
         }, 2000);
     });
 };

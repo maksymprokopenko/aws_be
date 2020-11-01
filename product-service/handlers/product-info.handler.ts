@@ -1,14 +1,37 @@
-import { APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda';
+import { APIGatewayEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda';
 import 'source-map-support/register';
 
 // controllers
-import { getAllProducts } from '../controllers';
+import { getProductById } from '../controllers';
 
-export const productInfoFn: APIGatewayProxyHandler = async (): Promise<APIGatewayProxyResult> => {
-    const allProducts = await getAllProducts();
+// models
+import { ResponseTypes } from '../models';
 
-    return {
-        statusCode: 200,
-        body: 'Product GET: ' + JSON.stringify(allProducts),
-    };
+// middleware
+import { corsResponseMiddleware } from '../middleware';
+
+export const productInfoFn: APIGatewayProxyHandler = async (event: APIGatewayEvent): Promise<APIGatewayProxyResult> => {
+    // if no ID GET parameter provided return an error
+    if (!event || !event.queryStringParameters || !event.queryStringParameters.id) {
+        return corsResponseMiddleware({
+            statusCode: ResponseTypes.BAD_REQUEST,
+            body: 'ID parameter is required!',
+        });
+    }
+
+    const { id } = event.queryStringParameters;
+    const product = await getProductById(id);
+
+    // if no product found with such ID
+    if (!product) {
+        return corsResponseMiddleware({
+            statusCode: ResponseTypes.NOT_FOUND,
+            body: 'No product found!',
+        });
+    }
+
+    return corsResponseMiddleware({
+        statusCode: ResponseTypes.SUCCESS,
+        body: JSON.stringify(product),
+    });
 };

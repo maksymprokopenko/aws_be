@@ -1,0 +1,10 @@
+api:
+    info:
+        version: '1'
+        title: Products API
+        description: Get list of products or product by ID.
+        contact:
+            name: Maksym Prokopenko
+models:
+    -   ${file(./models/swagger/product.model.yml)}
+    -   ${file(./models/swagger/products.model.yml)}
