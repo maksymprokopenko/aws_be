@@ -11,3 +11,5 @@ schema:
             type: string
         price:
             type: number
+        image:
+            type: string
