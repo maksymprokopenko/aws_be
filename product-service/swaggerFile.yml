@@ -1,0 +1,96 @@
+---
+swagger: "2.0"
+info:
+  description: "Get list of products or product by ID."
+  version: "2020-11-01T14:38:42Z"
+  title: "dev-product-service"
+  contact:
+    name: "Maksym Prokopenko"
+host: "zagkv99l30.execute-api.eu-west-1.amazonaws.com"
+basePath: "/dev"
+schemes:
+- "https"
+paths:
+  /product:
+    get:
+      summary: "Product by ID."
+      description: "Returns the product by ID."
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "query"
+        description: "Product ID."
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Returned when the operation is completed successfully."
+          schema:
+            $ref: "#/definitions/ProductModel"
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /products:
+    get:
+      summary: "All Products."
+      description: "Returns the list of all products."
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "Returned when the operation is completed successfully."
+          schema:
+            $ref: "#/definitions/ProductsModel"
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+definitions:
+  ProductsModel:
+    type: "array"
+    items:
+      type: "object"
+      properties:
+        price:
+          type: "number"
+        description:
+          type: "string"
+        id:
+          type: "string"
+        title:
+          type: "string"
+  ProductModel:
+    type: "object"
+    properties:
+      price:
+        type: "number"
+      description:
+        type: "string"
+      id:
+        type: "string"
+      title:
+        type: "string"

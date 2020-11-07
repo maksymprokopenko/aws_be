@@ -1,0 +1,18 @@
+name: ProductsModel
+contentType: 'application/json'
+schema:
+    type: array
+    items:
+        type: object
+        properties:
+            id:
+                type: string
+            title:
+                type: string
+            description:
+                type: string
+            price:
+                type: number
+            image:
+                type: string
+
