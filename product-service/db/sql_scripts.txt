@@ -1,0 +1,23 @@
+create extension if not exists "uuid-ossp";
+
+create table products (
+	id uuid primary key default uuid_generate_v4(),
+	title text not null,
+	description text,
+	price int,
+	photo_url text
+)
+
+create table stocks (
+	product_id uuid,
+	count int,
+	foreign key ("product_id") references "products" ("id")
+)
+
+insert into products (title, description, price, photo_url) values
+('Pro Staff 97 v13 Tennis Racket', 'Highlighted by a design that pays tribute to the historic Pro Staff series, the Pro Staff 97 v13 features a new Braid 45 construction that increases precision by adjusting the angle of the double braided fibers for enhanced feel and stability.', 220, 'https://shop.wilson.com/media/catalog/product/cache/38/image/9df78eab33525d08d6e5fb8d27136e95/7/1/71571e7b7d38cd6e0ba1733d82cedc02813c8fe8_WR043811U_1_Pro_Staff_97_V13_BL_RD_YE.jpg'),
+('Blade SW102 Autograph Tennis Racket', 'The Blade SW102 Autograph pays tribute to Serena’s relentless pursuit to cement her legacy not only as an unrivaled champion on the court but also as a transformative inspiration for many generations to come.', 250, 'https://shop.wilson.com/media/catalog/product/cache/38/image/9df78eab33525d08d6e5fb8d27136e95/a/3/a346f5b5ceb2e925e60fbe0187058df473064ea9_WR059111U_1_Blade_SW_102CV_BL_GD.jpg')
+
+insert into stocks (product_id, count) values
+('dd42a6d1-9106-44ed-abb4-e89eb6fc9f54', 5),
+('5161df1f-7ee2-498b-b437-ba89ace60f51', 10)

@@ -2,9 +2,11 @@ api:
     info:
         version: '1'
         title: Products API
-        description: Get list of products or product by ID.
+        description: GET list of products or product by ID / POST to create the product.
         contact:
             name: Maksym Prokopenko
 models:
+    -   ${file(./models/swagger/product-create.model.yml)}
     -   ${file(./models/swagger/product.model.yml)}
     -   ${file(./models/swagger/products.model.yml)}
+    -   ${file(./models/swagger/success-response.model.yml)}

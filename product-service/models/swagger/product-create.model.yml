@@ -1,10 +1,8 @@
-name: ProductModel
+name: ProductCreateModel
 contentType: 'application/json'
 schema:
     type: object
     properties:
-        id:
-            type: string
         title:
             type: string
         description:
