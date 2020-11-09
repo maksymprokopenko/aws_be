@@ -14,7 +14,7 @@ plugins:
 
 functions:
     product:
-        handler: handler.product
+        handler: handler.productInfoFn
         events:
             -   http:
                     path: product
@@ -33,7 +33,7 @@ functions:
                                 responseModels:
                                     "application/json": ProductModel
     products:
-        handler: handler.products
+        handler: handler.productListFn
         events:
             -   http:
                     path: products
