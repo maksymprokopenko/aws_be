@@ -1,4 +1,4 @@
-import { Client } from 'pg';
+import { Client, QueryConfig } from 'pg';
 
 // models
 import { ProductModel } from '../models/product.model';
@@ -25,16 +25,20 @@ export const getAllProducts = async (): Promise<ProductModel[]> => {
 
 export const getProductById = async (productId: string): Promise<ProductModel> => {
     const dbConnection = new Client();
+    const prepareQuery: QueryConfig = {
+        text: `
+            select id, title, description, price, photo_url, stocks.count from products
+            inner join stocks
+            on products.id = stocks.product_id
+            where id = $1
+        `,
+        values: [ productId ],
+    };
 
     try {
         await dbConnection.connect();
 
-        const { rows: products } = await dbConnection.query(`
-            select id, title, description, price, photo_url, stocks.count from products
-            inner join stocks
-            on products.id = stocks.product_id
-            where id = '${productId}'
-        `);
+        const { rows: products } = await dbConnection.query(prepareQuery);
 
         return products[0];
     } catch (error) {
@@ -46,14 +50,19 @@ export const getProductById = async (productId: string): Promise<ProductModel> =
 
 export const insertProduct = async (product: ProductModel): Promise<string> => {
     const dbConnection = new Client();
-    const prepareQuery = `with first_insert as (
-        insert into products ( title, description, price, photo_url )
-        values ( '${product.title}','${product.description}', '${product.price}', '${product.image}' )
-        returning id
-    )
-    insert into stocks ( product_id , count )
-    values ( ( select id from first_insert ), '${product.count}' )
-    returning product_id`;
+    const prepareQuery: QueryConfig = {
+        text: `
+            with first_insert as (
+                insert into products ( title, description, price, photo_url )
+                values ( $1, $2, $3, $4 )
+                returning id
+            )
+            insert into stocks ( product_id , count )
+            values ( ( select id from first_insert ), $5 )
+            returning product_id
+        `,
+        values: [ product.title, product.description, product.price, product.image, product.count ],
+    };
 
     try {
         await dbConnection.connect();
