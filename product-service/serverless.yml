@@ -6,14 +6,15 @@ provider:
     runtime: nodejs12.x
     stage: dev
     region: eu-west-1
+    environment: ${file(./env/env.production.yml)}
 
 plugins:
     -   serverless-webpack
     -   serverless-aws-documentation
 
 functions:
-    productInfo:
-        handler: handler.productInfo
+    product:
+        handler: handler.productInfoFn
         events:
             -   http:
                     path: product
@@ -23,8 +24,7 @@ functions:
                         summary: Product by ID.
                         description: Returns the product by ID.
                         queryParams:
-                            -
-                                name: id
+                            -   name: id
                                 description: Product ID.
                                 required: true
                         methodResponses:
@@ -32,8 +32,8 @@ functions:
                                 description: Returned when the operation is completed successfully.
                                 responseModels:
                                     "application/json": ProductModel
-    productList:
-        handler: handler.productList
+    products:
+        handler: handler.productListFn
         events:
             -   http:
                     path: products
@@ -47,6 +47,20 @@ functions:
                                 description: Returned when the operation is completed successfully.
                                 responseModels:
                                     "application/json": ProductsModel
+            -   http:
+                    path: products
+                    method: post
+                    cors: true
+                    documentation:
+                        summary: Create Product.
+                        description: Create product and return id of newly created product.
+                        requestModels:
+                            "application/json": ProductCreateModel
+                        methodResponses:
+                            -   statusCode: '200'
+                                description: Returned when the operation is completed successfully.
+                                responseModels:
+                                    "text/plain": SuccessResponseModel
 
 custom:
     documentation: ${file(./swagger/documentation.yml)}

@@ -1,3 +1,6 @@
+# env files with production access
+product-service/env/
+
 # Logs
 logs
 *.log
