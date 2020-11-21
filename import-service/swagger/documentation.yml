@@ -1,0 +1,9 @@
+api:
+    info:
+        version: '1'
+        title: Import Products API
+        description: Import products API.
+        contact:
+            name: Maksym Prokopenko
+# models:
+    # -   ${file(./models/swagger/product-create.model.yml)}
