@@ -12,6 +12,11 @@ provider:
                 -   "s3:*"
             Resource:
                 -   "arn:aws:s3:::uploaded-mp/*"
+        -   Effect: "Allow"
+            Action: 
+                -   "sqs:*"
+            Resource:
+                -   "arn:aws:sqs:eu-west-1:869906325472:mp-aws-sqs-queue"
 
 plugins:
     -   serverless-webpack

@@ -7,10 +7,37 @@ provider:
     stage: dev
     region: eu-west-1
     environment: ${file(./env/env.production.yml)}
+    iamRoleStatements:
+        -   Effect: "Allow"
+            Action: "sqs:*"
+            Resource:
+                -   Fn::GetAtt: [ SQSQueue, Arn ]
+        -   Effect: "Allow"
+            Action: "sns:*"
+            Resource:
+                Ref: SNSTopic
 
 plugins:
     -   serverless-webpack
     -   serverless-aws-documentation
+
+resources:
+    Resources:
+        SQSQueue:
+            Type: AWS::SQS::Queue
+            Properties:
+                QueueName: mp-aws-sqs-queue
+        SNSTopic:
+            Type: AWS::SNS::Topic
+            Properties:
+                TopicName: mp-aws-sns-topic
+        SNSSubscription:
+            Type: AWS::SNS::Subscription
+            Properties:
+                Endpoint: maksym_prokopenko@epam.com
+                Protocol: email
+                TopicArn:
+                    Ref: SNSTopic
 
 functions:
     product:
@@ -61,6 +88,15 @@ functions:
                                 description: Returned when the operation is completed successfully.
                                 responseModels:
                                     "text/plain": SuccessResponseModel
+    catalogBatchProcess:
+        handler: handler.catalogBatchProcessFn
+        events:
+            -   sqs:
+                    batchSize: 5
+                    arn:
+                        Fn::GetAtt:
+                            -   SQSQueue
+                            -   Arn
 
 custom:
     documentation: ${file(./swagger/documentation.yml)}

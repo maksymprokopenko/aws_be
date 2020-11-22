@@ -9,12 +9,14 @@
     "docs": "serverless downloadDocumentation --outputFileName=swaggerFile.yml"
   },
   "dependencies": {
+    "aws-sdk": "^2.797.0",
     "pg": "^8.4.2",
     "source-map-support": "^0.5.10",
     "yup": "^0.29.3"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.17",
+    "@types/aws-sdk": "^2.7.0",
     "@types/jest": "^26.0.15",
     "@types/node": "^10.12.18",
     "@types/pg": "^7.14.6",

@@ -1,4 +1,3 @@
-import { productInfoFn } from './handlers';
-import { productListFn } from './handlers';
+import { productInfoFn, productListFn, catalogBatchProcessFn } from './handlers';
 
-export { productInfoFn, productListFn };
+export { productInfoFn, productListFn, catalogBatchProcessFn };
