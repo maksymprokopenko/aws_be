@@ -28,10 +28,19 @@ export const catalogBatchProcessFn = async (event: SQSEvent): Promise<any> => {
             [keys[4]]: +values[4],
         } as unknown as ProductModel;
     });
-    const isValid = await ProductSchema.isValid(prepareProducts[0]);
 
-    if (isValid) {
-        insertProduct(prepareProducts[0]);
-        pushMessage('Product created!', `${prepareProducts[0].title} has been created!`);
+    for (const product of prepareProducts) {
+        const isValid = await ProductSchema.isValid(product);
+
+        if (isValid) {
+            try {
+                const productId = await insertProduct(product);
+
+                pushMessage('Product created!', `${product.title} has been created with id: ${productId}!`);
+            } catch (error) {
+                console.error(error);
+                pushMessage('Error!', `Error while ${product.title} product creation!`);
+            }
+        }
     }
 };
