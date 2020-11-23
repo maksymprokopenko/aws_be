@@ -5,13 +5,14 @@ import 'source-map-support/register';
 import { ProductModel } from '../models';
 
 // controllers
-import { insertProduct } from '../controllers/products.controller';
-
-// validators
-import { ProductSchema } from '../models';
+import { insertProducts } from '../controllers/products.controller';
 
 // services
 import { pushMessage } from '../services';
+
+const prepareString = (strings: string[]): string => {
+    return strings.join(', ');
+};
 
 export const catalogBatchProcessFn = async (event: SQSEvent): Promise<any> => {
     const prepareProductRecords: { [key: string]: string }[] = event.Records.map(({ body }) => JSON.parse(body));
@@ -28,19 +29,7 @@ export const catalogBatchProcessFn = async (event: SQSEvent): Promise<any> => {
             [keys[4]]: +values[4],
         } as unknown as ProductModel;
     });
+    const productIds = await insertProducts(prepareProducts);
 
-    for (const product of prepareProducts) {
-        const isValid = await ProductSchema.isValid(product);
-
-        if (isValid) {
-            try {
-                const productId = await insertProduct(product);
-
-                pushMessage('Product created!', `${product.title} has been created with id: ${productId}!`);
-            } catch (error) {
-                console.error(error);
-                pushMessage('Error!', `Error while ${product.title} product creation!`);
-            }
-        }
-    }
+    pushMessage('Product created!', `${prepareString(productIds)} has been created!`);
 };

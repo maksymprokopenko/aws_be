@@ -76,3 +76,36 @@ export const insertProduct = async (product: ProductModel): Promise<string> => {
         dbConnection.end();
     }
 };
+
+export const insertProducts = async (products: ProductModel[]): Promise<string[]> => {
+    const dbConnection = new Client();
+    const createdProducts: string[] = [];
+
+    await dbConnection.connect();
+    for (const product of products) {
+        const prepareQuery: QueryConfig = {
+            text: `
+                with first_insert as (
+                    insert into products ( title, description, price, photo_url )
+                    values ( $1, $2, $3, $4 )
+                    returning id
+                )
+                insert into stocks ( product_id , count )
+                values ( ( select id from first_insert ), $5 )
+                returning product_id
+            `,
+            values: [ product.title, product.description, product.price, product.image, product.count ],
+        };
+
+        try {
+            const { rows } = await dbConnection.query(prepareQuery);
+
+            createdProducts.push(rows[0].product_id);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    await dbConnection.end();
+
+    return createdProducts;
+};
