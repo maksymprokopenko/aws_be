@@ -41,6 +41,20 @@ functions:
                             -   name: name
                                 description: File name.
                                 required: true
+                    authorizer:
+                        name: basicAuthorizer
+                        arn:
+                            !Join
+                                -   ':'
+                                -
+                                    -   'arn:aws:lambda'
+                                    -   !Ref AWS::Region
+                                    -   !Ref AWS::AccountId
+                                    -   'function:auth-service-dev-basicAuthorizer'
+
+                        resultTtlInSeconds: 0
+                        identitySource: method.request.header.Authorization
+                        type: token
     parseFile:
         handler: handler.parseFile
         events:
