@@ -1,4 +1,5 @@
 import { S3Event, S3EventRecord } from 'aws-lambda';
+import { SQS } from 'aws-sdk';
 const csv = require('csv-parser');
 
 // services
@@ -6,6 +7,7 @@ import { s3Service } from '../services';
 
 export const parseController = (event: S3Event) => {
     const client = s3Service.createS3Client();
+    const sqs = new SQS();
 
     event.Records.forEach((record: S3EventRecord) => {
         const dataStream = client.getObject({
@@ -16,7 +18,10 @@ export const parseController = (event: S3Event) => {
         dataStream.pipe(
             csv(),
         ).on('data', (pack: any) => {
-            console.log('File pack', pack);
+            sqs.sendMessage({
+                QueueUrl: process.env.SQS_URL,
+                MessageBody: JSON.stringify(pack),
+            }).send();
         }).on('end', async () => {
             const prepareFullName = `${s3Service.bucket}/${record.s3.object.key}`;
             const newFile = record.s3.object.key.replace('uploaded', 'parsed');
